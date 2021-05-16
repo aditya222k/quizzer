@@ -8,7 +8,7 @@ import 'package:confetti/confetti.dart';
 
 QuizBrain quizBrain = QuizBrain();
 List<Widget> response = [];
-
+List yourAnswer = [];
 String useAns;
 
 int score = 0;
@@ -16,13 +16,9 @@ void main() {
   runApp(
     MaterialApp(
       title: 'Named Routes Demo',
-      // Start the app with the "/" named route. In this case, the app starts
-      // on the FirstScreen widget.
       initialRoute: '/',
       routes: {
-        // When navigating to the "/" route, build the FirstScreen widget.
         '/': (context) => Quizzler(),
-        // When navigating to the "/second" route, build the SecondScreen widget.
         '/second': (context) => ShowResponse(),
       },
     ),
@@ -31,6 +27,7 @@ void main() {
 
 void list() {
   response.add(Padding(
+    //responses to the wdiget that is printed on the check response page
     padding: const EdgeInsets.fromLTRB(5, 5, 5, 5),
     child: ClipRRect(
       borderRadius: BorderRadius.circular(10),
@@ -51,7 +48,7 @@ void list() {
                         // color: Colors.pink,
                         width: double.infinity,
                         child: Text(
-                          '$questionsSaver',
+                          '$questionsSaver', //qustion from quiz_brain
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 20,
@@ -67,10 +64,25 @@ void list() {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Text(
+                            'Your answer: ',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 0, 37, 0),
+                            child: Text(
+                              yourAnswer[quess - 1]
+                                  .toString(), //To print User response, bool to string
+                              style: TextStyle(
+                                fontWeight: FontWeight.w900,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                          Text(
                             'Correct answer: ',
                             style: TextStyle(color: Colors.white),
                           ),
-                          Text('$answersSaver',
+                          Text('$answersSaver', //qustion from quiz_brain
                               style: TextStyle(
                                 fontWeight: FontWeight.w900,
                                 color: Colors.white,
@@ -121,6 +133,7 @@ class _QuizPageState extends State<QuizPage> {
   // }
 
   var alertStyle = AlertStyle(
+    //Alert Styling
     animationType: AnimationType.grow,
     isCloseButton: true,
     isOverlayTapDismiss: false,
@@ -147,17 +160,19 @@ class _QuizPageState extends State<QuizPage> {
 
   void checkAnswer(bool userInput) {
     bool correctAnswer = quizBrain.getAnswer();
-
+    yourAnswer.add(userInput);
     setState(() {
       if (quizBrain.isFinished() == true) {
         quess++;
         if (userInput == correctAnswer) {
-          counter();
+          //To display the final text and count score if the answer is correct
+          counter(); //no else statemnt required because only correct situation is useful
           scoreKeeper.add(
             Icon(CupertinoIcons.checkmark, color: Colors.green),
           );
         }
         Alert(
+            //Alert function Widget
             context: context,
             title: 'Thank',
             style: alertStyle,
@@ -176,9 +191,9 @@ class _QuizPageState extends State<QuizPage> {
                 width: 200,
               ),
             ]).show();
-        quizBrain.reset();
-        scoreKeeper = [];
-        score = 0;
+        quizBrain.reset(); //reset the qn
+        scoreKeeper = []; //reset widget that is used on the second page
+        score = 0; //reset score
       } else {
         if (userInput == correctAnswer) {
           print('Correct');
@@ -193,6 +208,7 @@ class _QuizPageState extends State<QuizPage> {
           );
         }
         quizBrain.nextQuestion();
+        // print(yourAnswer[quess - 1]);
       }
     });
     // if (userInput == correctAnswer) {
@@ -286,6 +302,7 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               )),
           Expanded(
+              //True button Page 1
               child: Padding(
             padding: EdgeInsets.all(15),
             child: FlatButton(
@@ -307,6 +324,7 @@ class _QuizPageState extends State<QuizPage> {
             ),
           )),
           Expanded(
+              //False button Page 2
               child: Padding(
             padding: EdgeInsets.all(15),
             child: FlatButton(
@@ -328,6 +346,7 @@ class _QuizPageState extends State<QuizPage> {
             ),
           )),
           SingleChildScrollView(
+              //Display ticks and crosses
               scrollDirection: Axis.horizontal,
               child: Row(children: scoreKeeper)),
           // children: scoreKeeper,
@@ -338,6 +357,7 @@ class _QuizPageState extends State<QuizPage> {
 }
 
 class ShowResponse extends StatelessWidget {
+  //Page to display responses
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -360,12 +380,19 @@ class ShowResponse extends StatelessWidget {
                 Navigator.pop(context);
                 response = [];
               },
-              child: Icon(CupertinoIcons.backward)),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(25, 0, 0, 0),
+                child: Icon(
+                  CupertinoIcons.backward,
+                  size: 30,
+                ),
+              )),
         ),
         body: Scrollbar(
           child: Center(
             child: SafeArea(
               child: SingleChildScrollView(
+                  //Display QnA and user and correct response
                   scrollDirection: Axis.vertical,
                   child: Column(children: response)),
             ),
